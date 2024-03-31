@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Button, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Box, Button, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { ActionClassificationEnum, ActionsEnum, ConditionsEnum, CustomAction, CustomCondition } from './Types';
 import Dialog from '@mui/material/Dialog';
@@ -35,7 +35,8 @@ function App() {
   const [actions, setActions] = useState<CustomAction[]>([emptyAction]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedActionIndex, setSelectedActionIndex] = useState<number | null>(null);
-  const [conditions, setConditions] = useState<CustomCondition[]>([]);
+
+  // const [conditions, setConditions] = useState<CustomCondition[]>([]);
   const actionsEnumOptions = Object.keys(ActionsEnum).filter(key => isNaN(Number(key)));
   const conditionsEnumOptions = Object.keys(ConditionsEnum).filter(key => isNaN(Number(key)));
   const operators = ['>', '<', '!', '=='];
@@ -63,39 +64,68 @@ console.log({actions})
     URL.revokeObjectURL(a.href); // Clean up
 };
 
-  const addNewCondition = () => {
+const addNewCondition = () => {
+  if (selectedActionIndex !== null) {
     const newCondition: CustomCondition = {
-      // Set up a blank or default condition structure
-      name: ConditionsEnum.HealthP, // Replace with default or blank values
+      name: ConditionsEnum.HealthP,
       operator: '<',
       value: 60,
       valueString: '',
-      // ... other properties
     };
-    setConditions([...conditions, newCondition]);
-  };
-  const handleConditionChange = (index: number, prop: string) => (event: any) => {
-    const newConditions = [...conditions];
-    newConditions[index] = { ...newConditions[index], [prop]: event.target.value };
-    setConditions(newConditions);
-  };
-  const handleSaveConditions = () => {
-    if (selectedActionIndex != null) {
-      const updatedActions = [...actions];
-      updatedActions[selectedActionIndex].conditions = [...conditions];
+    const updatedActions = [...actions];
+    updatedActions[selectedActionIndex].conditions?.push(newCondition);
+    setActions(updatedActions);
+  }
+};
+const handleConditionChange = (actionIndex: number, conditionIndex: number, prop: string) => (event: any) => {
+  if (actionIndex >= 0 && actionIndex < actions.length) {
+    const updatedActions = [...actions];
+    const conditions = updatedActions[actionIndex].conditions;
+    if (conditionIndex >= 0 && conditionIndex < (conditions?.length ?? 0)) {
+      if (conditions) {
+        conditions[conditionIndex] = { ...conditions[conditionIndex], [prop]: event.target.value };
+      }
       setActions(updatedActions);
     }
+  }
+};
+  const handleSaveConditions = () => {
     handleCloseModal();
   };
   const handleOpenModal = (index: number) => {
     setSelectedActionIndex(index);
     setOpenModal(true);
   };
-
   const handleCloseModal = () => {
     setOpenModal(false);
   };
-
+  const handleConditionTypeChange = (actionIndex: number, conditionIndex: number) => (event: any) => {
+    if (actionIndex != null && actionIndex >= 0 && actionIndex < actions.length) {
+      const updatedActions = [...actions];
+      const conditions = updatedActions[actionIndex].conditions;
+      if (conditionIndex >= 0 && conditionIndex < (conditions?.length ?? 0)) {
+        // Directly update the name (type) of the condition
+        if (conditions){
+          conditions[conditionIndex] = { ...conditions[conditionIndex], name: event.target.value };
+        }
+        setActions(updatedActions);
+      }
+    }
+  };
+  
+  const handleConditionOperatorChange = (actionIndex: number, conditionIndex: number) => (event: any) => {
+    if (actionIndex != null && actionIndex >= 0 && actionIndex < actions.length) {
+      const updatedActions = [...actions];
+      const conditions = updatedActions[actionIndex].conditions;
+      if (conditionIndex >= 0 && conditionIndex < (conditions?.length ?? 0)) {
+        // Directly update the operator of the condition
+        if (conditions){
+        conditions[conditionIndex] = { ...conditions[conditionIndex], operator: event.target.value };
+        }
+        setActions(updatedActions);
+      }
+    }
+  };
   // Function to add a new empty action
   const addNewAction = () => {
     setActions([...actions, {...emptyAction, conditions: [] }]);
@@ -116,17 +146,17 @@ console.log({actions})
     newActions[index] = { ...newActions[index], [prop]: event.target.value };
     setActions(newActions);
   };
-  const handleConditionTypeChange = (index: number) => (event: any) => {
-    const newConditions = [...conditions];
-    newConditions[index] = { ...newConditions[index], name: event.target.value };
-    setConditions(newConditions);
-  };
+  // const handleConditionTypeChange = (index: number) => (event: any) => {
+  //   const newConditions = [...conditions];
+  //   newConditions[index] = { ...newConditions[index], name: event.target.value };
+  //   setConditions(newConditions);
+  // };
 
-  const handleConditionOperatorChange = (index: number) => (event: any) => {
-    const newConditions = [...conditions];
-    newConditions[index] = { ...newConditions[index], operator: event.target.value };
-    setConditions(newConditions);
-  };
+  // const handleConditionOperatorChange = (index: number) => (event: any) => {
+  //   const newConditions = [...conditions];
+  //   newConditions[index] = { ...newConditions[index], operator: event.target.value };
+  //   setConditions(newConditions);
+  // };
   return (
     <div className="App">
      <TableContainer component={Paper}>
@@ -210,80 +240,130 @@ console.log({actions})
         </TableBody>
       </Table>
       <Button onClick={addNewAction}>Add</Button>
-      <Dialog open={openModal} onClose={handleCloseModal}  fullWidth={true} maxWidth="xl">
+      <Dialog open={openModal} onClose={handleCloseModal} fullWidth={true} maxWidth="xl">
         <DialogTitle>Manage Conditions</DialogTitle>
         <DialogContent>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="conditions table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Operator</TableCell>
-                  <TableCell>Value</TableCell>
-                  <TableCell>Value String</TableCell>
-                  {/* Add more headers as needed */}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {conditions.map((condition, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                    <Select
-                sx={{width:'125px'}}
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={condition.name}
-        label="Type"
-        onChange={handleConditionTypeChange(index)} // Pass index here
-      >
-        {conditionsEnumOptions.map((conditionValue, conditionIndex) => (
-          <MenuItem key={conditionIndex} value={conditionValue}>
-            {conditionValue}
-          </MenuItem>
-        ))}
-      </Select>
-                    </TableCell>
-                    <TableCell>
-                    <Select
-                sx={{width:'125px'}}
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={condition.name}
-        label="Type"
-        onChange={handleConditionOperatorChange(index)} // Pass index here
-      >
-        {operators.map(operator => (
-          <MenuItem key={operator} value={operator}>
-            {operator}
-          </MenuItem>
-        ))}
-      </Select>
-  </TableCell>
-                    <TableCell>
-                    <TextField sx={{width:'75px'}} id="outlined-basic" value={condition.value} variant="outlined" 
-  onChange={handleConditionChange(index, 'value')}/>
-  </TableCell>
-                    <TableCell>
-                    <TextField sx={{width:'75px'}} id="outlined-basic" value={condition.valueString} variant="outlined" 
-  onChange={handleConditionChange(index, 'valueString')}/></TableCell>
-                    {/* Add more cells as needed */}
+          {/* Adjustments to the conditions table to use action-specific conditions */}
+          {selectedActionIndex !== null &&
+            actions[selectedActionIndex].conditions?.map((condition, index) => (
+              <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="conditions table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Operator</TableCell>
+                    <TableCell>Value</TableCell>
+                    <TableCell>Value String</TableCell>
+                    {/* Add more headers as needed */}
                   </TableRow>
-                ))}
+                </TableHead>
+
+              <TableBody>
+              <TableRow key={index}>
+      <TableCell>
+        <Select
+          sx={{ width: '125px' }}
+          labelId={`condition-type-select-label-${index}`}
+          id={`condition-type-select-${index}`}
+          value={condition.name}
+          label="Type"
+          onChange={handleConditionTypeChange(selectedActionIndex, index)} // Adjusted to pass both action and condition indexes
+        >
+          {conditionsEnumOptions.map((conditionValue, enumIndex) => (
+            <MenuItem key={enumIndex} value={conditionValue}>
+              {conditionValue}
+            </MenuItem>
+          ))}
+        </Select>
+      </TableCell>
+      <TableCell>
+        <Select
+          sx={{ width: '125px' }}
+          labelId={`condition-operator-select-label-${index}`}
+          id={`condition-operator-select-${index}`}
+          value={condition.operator}
+          label="Operator"
+          onChange={handleConditionOperatorChange(selectedActionIndex, index)} // Adjusted to pass both action and condition indexes
+        >
+          {operators.map(operator => (
+            <MenuItem key={operator} value={operator}>
+              {operator}
+            </MenuItem>
+          ))}
+        </Select>
+      </TableCell>
+      <TableCell>
+        <TextField 
+          sx={{ width: '75px' }} 
+          id={`condition-value-${index}`} 
+          value={condition.value} 
+          variant="outlined"
+          onChange={handleConditionChange(selectedActionIndex, index, 'value')} // Adjusted for new structure
+        />
+      </TableCell>
+      <TableCell>
+        <TextField 
+          sx={{ width: '75px' }} 
+          id={`condition-valueString-${index}`} 
+          value={condition.valueString} 
+          variant="outlined" 
+          onChange={handleConditionChange(selectedActionIndex, index, 'valueString')} // Adjusted for new structure
+        />
+      </TableCell>
+      {/* Add more cells as needed */}
+    </TableRow>
               </TableBody>
-            </Table>
-          </TableContainer>
-          <Button 
-            variant="contained" 
-            onClick={addNewCondition}
-            style={{ marginTop: '10px' }}
-          >
-            Add New Condition
-          </Button>
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </Table>
+                </TableContainer>
+            
+              // Render condition inputs, updating condition within the selected action
+            ))}
+                     <Button 
+                     variant="contained" 
+                     onClick={addNewCondition}
+                     style={{ marginTop: '10px' }}
+                   >
+                     Add New Condition
+                   </Button>
+          {/* Other components remain unchanged */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal}>Cancel</Button>
           <Button onClick={handleSaveConditions}>Save</Button>
         </DialogActions>
+        {/* Dialog actions unchanged */}
       </Dialog>
       <button onClick={downloadJson}>Download JSON</button>
     </TableContainer>

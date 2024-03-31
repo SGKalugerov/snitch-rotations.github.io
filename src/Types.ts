@@ -27,19 +27,8 @@ export enum ActionClassificationEnum {
 }
 
 export enum ActionsEnum {
-    Kick,
-    Stun,
-    Pull,
-    Heal,
     Dps,
-    DefCD,
-    DpsCD,
-    Execute,
-    Proc,
-    Pot,
     Buff,
-    Summon,
-    Mount,
 }
 
 export enum ConditionsEnum {
