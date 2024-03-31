@@ -29,6 +29,7 @@ export enum ActionClassificationEnum {
 export enum ActionsEnum {
     Dps,
     Buff,
+    Pull
 }
 
 export enum ConditionsEnum {
