@@ -37,7 +37,21 @@ function App() {
   const actionsEnumOptions = Object.keys(ActionsEnum).filter(key => isNaN(Number(key)));
   const conditionsEnumOptions = Object.keys(ConditionsEnum).filter(key => isNaN(Number(key)));
   const operators = ['>', '<', '!', '=='];
+  const [draggedIndex, setDraggedIndex] = useState<number>(0);
 
+  const handleDragStart = (event: any, index: number) => {
+    setDraggedIndex(index);
+  };
+  
+  const handleDrop = (event: any, dropIndex:number) => {
+  
+    const newActions = [...actions];
+    const [reorderedItem] = newActions.splice(draggedIndex, 1);
+    newActions.splice(dropIndex, 0, reorderedItem);
+  
+    setActions(newActions);
+    setDraggedIndex(0); // Reset the dragged index
+  };
   const downloadJson = () => {
     // Include the `cclass` in the data to download
     const dataToDownload = {
@@ -141,7 +155,11 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
   };
   const handleActionChange = (index: number, prop: any) => (event: any) => {
     const newActions = [...actions];
-    newActions[index] = { ...newActions[index], [prop]: event.target.value };
+    let value = event.target.value;
+    if (prop === 'slotIndex') {
+      value = parseInt(event.target.value);
+    }
+    newActions[index] = { ...newActions[index], [prop]: value };
     setActions(newActions);
   };
  
@@ -194,7 +212,11 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
         </TableHead>
         <TableBody>
         {actions.map((action, index) => (
-              <TableRow key={index}>
+              <TableRow key={index}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => handleDrop(e, index)}>
                 <TableCell align="right">
                   <Button variant="outlined" color="error" onClick={() => deleteAction(index)}>
                     Delete
