@@ -27,22 +27,39 @@ function App() {
   };
 
   // Initialize state with one empty action
-  const [actions, setActions] = useState<CustomAction[]>([emptyAction]);
+  const [actions, setActions] = useState<CustomAction[]>(() => {
+    const savedActions = localStorage.getItem('actions');
+    return savedActions ? JSON.parse(savedActions) : [emptyAction];
+  });
   const [openModal, setOpenModal] = useState(false);
   const [selectedActionIndex, setSelectedActionIndex] = useState<number | null>(null);
-  const [name, setName] = useState<string>();
-  const [cclass, setCclass] = useState<string>();
-
+  const [name, setName] = useState<string>(() => {
+    return localStorage.getItem('name') || '';
+  });
+  const [cclass, setCclass] = useState(() => {
+    return localStorage.getItem('cclass') || '';
+  });
   // const [conditions, setConditions] = useState<CustomCondition[]>([]);
   const actionsEnumOptions = Object.keys(ActionsEnum).filter(key => isNaN(Number(key)));
   const conditionsEnumOptions = Object.keys(ConditionsEnum).filter(key => isNaN(Number(key)));
   const operators = ['>', '<', '!', '=='];
   const [draggedIndex, setDraggedIndex] = useState<number>(0);
+  useEffect(() => {
+    localStorage.setItem('actions', JSON.stringify(actions));
+  }, [actions]);
+  useEffect(() => {
+    localStorage.setItem('name', name);
+  }, [name]);
 
+  useEffect(() => {
+    localStorage.setItem('cclass', cclass);
+  }, [cclass]);
   const handleDragStart = (event: any, index: number) => {
     setDraggedIndex(index);
   };
-  
+  const wipeAll = () => {
+    setActions([{...emptyAction, conditions: [] }]);
+  }
   const handleDrop = (event: any, dropIndex:number) => {
   
     const newActions = [...actions];
@@ -143,16 +160,27 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
     // Function to handle type change
     const handleTypeChange = (index: number) => (event: any) => {
       const newActions = [...actions];
-      const value = parseInt(ActionsEnum[event.target.value])
-      newActions[index] = { ...newActions[index], type: value };
+      console.log(event.target.value)
+      newActions[index] = { ...newActions[index], type: event.target.value };
       setActions(newActions);
     };
 
     
-  const deleteAction = (index: number) => {
-    const newActions = actions.filter((_, actionIndex) => actionIndex !== index);
-    setActions(newActions);
-  };
+    const deleteAction = (index: number) => {
+      const newActions = actions.filter((_, actionIndex) => actionIndex !== index);
+      
+      const updatedActions = newActions.map(action => ({
+        ...action,
+        conditions: action.conditions ? [...action.conditions] : [],
+      }));
+     if(updatedActions.length < 1){
+      setActions([...updatedActions, {...emptyAction, conditions: [] }]);
+     } else {
+      setActions(updatedActions);
+
+     }
+
+    };
   const handleActionChange = (index: number, prop: any) => (event: any) => {
     const newActions = [...actions];
     let value = event.target.value;
@@ -182,6 +210,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
   <MenuItem value="Paladin">Paladin</MenuItem>
   <MenuItem value="Priest">Priest</MenuItem>
   <MenuItem value="Rogue">Rogue</MenuItem>
+  <MenuItem value="Shaman">Shaman</MenuItem>
   <MenuItem value="Warlock">Warlock</MenuItem>
   <MenuItem value="Warrior">Warrior</MenuItem>
 </Select>
