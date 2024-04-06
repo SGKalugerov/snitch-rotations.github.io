@@ -47,7 +47,7 @@ function App() {
   // const [conditions, setConditions] = useState<CustomCondition[]>([]);
   const actionsEnumOptions = Object.keys(ActionsEnum).filter(key => isNaN(Number(key)));
   const conditionsEnumOptions = Object.keys(ConditionsEnum).filter(key => isNaN(Number(key)));
-  const operators = ['>', '<', '!', '=='];
+  const operators = ['>', '<', '!', '==', ''];
   const [draggedIndex, setDraggedIndex] = useState<number>(0);
   useEffect(() => {
     localStorage.setItem('actions', JSON.stringify(actions));
