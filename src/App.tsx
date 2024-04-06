@@ -57,8 +57,37 @@ function App() {
   const handleDragStart = (event: any, index: number) => {
     setDraggedIndex(index);
   };
+  const handleFileChange = (event: any) => {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+  
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const result = e.target?.result ?? "";
+        if (typeof result === "string") {
+          try {
+            const json = JSON.parse(result);
+            if(json.actions && json.class) {
+              setActions(json.actions);
+              setCclass(json.class);
+            } else {
+              console.error("Invalid file format or structure.");
+            }
+          } catch (err) {
+            console.error("Error parsing JSON file:", err);
+          }
+        } else {
+          console.error("File content is not a string.");
+        }
+        event.target.value = ''
+    };
+    reader.readAsText(file);
+  };
   const wipeAll = () => {
     setActions([{...emptyAction, conditions: [] }]);
+    setName('');
   }
   const handleDrop = (event: any, dropIndex:number) => {
   
@@ -436,6 +465,15 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
       </Dialog>
       <button onClick={downloadJson}>Download JSON</button>
     </TableContainer>
+    <Button onClick={() => wipeAll()}>Wipe</Button>
+    <Button onClick={() => document.getElementById('fileInput')?.click()}>Upload JSON</Button>
+<input
+  type="file"
+  id="fileInput"
+  style={{ display: 'none' }}
+  accept=".json"
+  onChange={handleFileChange}
+/>
     </div>
   );
 }
