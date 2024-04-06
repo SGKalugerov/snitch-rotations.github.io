@@ -6,7 +6,7 @@ export type CustomAction ={
     waitTime?: number;
     stepBack?: boolean;
     hasCastBar?: boolean;
-    classification: ActionClassificationEnum;
+    classification?: ActionClassificationEnum;
     slotIndex: number;
     cooldown?: number;
     type: ActionsEnum;

@@ -22,7 +22,6 @@ function App() {
     stepBack: false,
     hasCastBar: false,
     tapTwice: false,
-    classification: ActionClassificationEnum.Spell,
     conditions: []
     // ... other properties with their default values
   };
