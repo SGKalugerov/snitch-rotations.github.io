@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Box, Button, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Box, Button, Grid, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { ActionClassificationEnum, ActionsEnum, ConditionsEnum, CustomAction, CustomCondition } from './Types';
 import Dialog from '@mui/material/Dialog';
@@ -26,30 +26,27 @@ function App() {
     conditions: []
     // ... other properties with their default values
   };
-  // const emptyCondition: CustomCondition = {
-  //   name: ConditionsEnum.HealthP,
-  //   operator: '<',
-  //   value: 60 
-  // }
+
   // Initialize state with one empty action
   const [actions, setActions] = useState<CustomAction[]>([emptyAction]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedActionIndex, setSelectedActionIndex] = useState<number | null>(null);
+  const [name, setName] = useState<string>();
+  const [cclass, setCclass] = useState<string>();
 
   // const [conditions, setConditions] = useState<CustomCondition[]>([]);
   const actionsEnumOptions = Object.keys(ActionsEnum).filter(key => isNaN(Number(key)));
   const conditionsEnumOptions = Object.keys(ConditionsEnum).filter(key => isNaN(Number(key)));
   const operators = ['>', '<', '!', '=='];
 
-  // useEffect(() => {
-  //   if (selectedActionIndex != null) {
-  //     setConditions([...actions[selectedActionIndex].conditions]);
-  //   }
-  // }, [selectedActionIndex, actions]);
   const downloadJson = () => {
-    // Extract data from state (e.g., `actions` state)
-    const dataToDownload = { actions };
-console.log({actions})
+    // Include the `cclass` in the data to download
+    const dataToDownload = {
+        class: cclass, // Include the class state value
+        actions: actions
+    };
+    console.log(dataToDownload);
+
     // Convert data to JSON string
     const jsonString = JSON.stringify(dataToDownload, null, 2);
 
@@ -59,7 +56,7 @@ console.log({actions})
     // Create an anchor element and use it for downloading
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'actions.json'; // File name
+    a.download = `${name}.json`; // File name
     a.click();
     URL.revokeObjectURL(a.href); // Clean up
 };
@@ -133,9 +130,11 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
     // Function to handle type change
     const handleTypeChange = (index: number) => (event: any) => {
       const newActions = [...actions];
-      newActions[index] = { ...newActions[index], type: event.target.value };
+      const value = parseInt(ActionsEnum[event.target.value])
+      newActions[index] = { ...newActions[index], type: value };
       setActions(newActions);
     };
+
     
   const deleteAction = (index: number) => {
     const newActions = actions.filter((_, actionIndex) => actionIndex !== index);
@@ -146,20 +145,39 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
     newActions[index] = { ...newActions[index], [prop]: event.target.value };
     setActions(newActions);
   };
-  // const handleConditionTypeChange = (index: number) => (event: any) => {
-  //   const newConditions = [...conditions];
-  //   newConditions[index] = { ...newConditions[index], name: event.target.value };
-  //   setConditions(newConditions);
-  // };
-
-  // const handleConditionOperatorChange = (index: number) => (event: any) => {
-  //   const newConditions = [...conditions];
-  //   newConditions[index] = { ...newConditions[index], operator: event.target.value };
-  //   setConditions(newConditions);
-  // };
+ 
   return (
     <div className="App">
      <TableContainer component={Paper}>
+    <Grid container spacing={2}>
+  <Grid item xs={3}>
+  <Box>Class </Box>        
+  <Select
+  sx={{ width: '125px' }}
+  labelId="demo-simple-select-label"
+  id="demo-simple-select"
+  value={cclass}
+  label="Type"
+  onChange={(event) => setCclass(event.target.value)} // Use onChange to handle the selection
+>
+  <MenuItem value="Druid">Druid</MenuItem>
+  <MenuItem value="Hunter">Hunter</MenuItem>
+  <MenuItem value="Paladin">Paladin</MenuItem>
+  <MenuItem value="Priest">Priest</MenuItem>
+  <MenuItem value="Rogue">Rogue</MenuItem>
+  <MenuItem value="Warlock">Warlock</MenuItem>
+  <MenuItem value="Warrior">Warrior</MenuItem>
+</Select>
+  </Grid>
+  <Grid item xs={3}>
+  <Box>Name </Box>  <TextField 
+  onChange={(event) => setName(event.target.value)}
+  value={name}
+/>
+  </Grid>
+
+</Grid>
+
       <Table sx={{ minWidth: 650, maxWidth: 1500 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -194,7 +212,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
   onChange={handleActionChange(index, 'keybind')}/>
                   </TableCell>
                 <TableCell align="right">
-                <TextField sx={{width:'75px'}} id="outlined-basic" value={action.slotIndex} label="Outlined" variant="outlined" 
+                <TextField type="number" sx={{width:'75px'}} id="outlined-basic" value={action.slotIndex} label="Outlined" variant="outlined" 
                 
   onChange={handleActionChange(index, 'slotIndex')}/>
                 </TableCell>
@@ -296,6 +314,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
         <TextField 
           sx={{ width: '75px' }} 
           id={`condition-value-${index}`} 
+          type="number"
           value={condition.value} 
           variant="outlined"
           onChange={handleConditionChange(selectedActionIndex, index, 'value')} // Adjusted for new structure

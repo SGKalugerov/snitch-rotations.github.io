@@ -31,7 +31,18 @@ export enum ActionsEnum {
     Buff,
     Pull
 }
-
+export enum RoutesEnum
+{
+    Unknown = 0,
+    Grind,
+    Graveyard,
+    Repair,
+    Restock,
+    Mail,
+    Vendor,
+    Recalculate,
+    RunningTo
+}
 export enum ConditionsEnum {
     HealthP = 1,
     ManaP,
@@ -53,4 +64,7 @@ export enum ConditionsEnum {
     ComboPoints,
     IsInMeleeRange,
     HasWeaponEnch,
+    PetHealth,
+    TimeOutOfCombatSeconds,
+    RouteType
 }
