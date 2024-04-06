@@ -22,7 +22,12 @@ function App() {
     stepBack: false,
     hasCastBar: false,
     tapTwice: false,
-    conditions: []
+    conditions: [{
+      name: ConditionsEnum.EnemyCasting,
+      operator: "!",
+      value: 0,
+      valueString: ''
+    }]
     // ... other properties with their default values
   };
 
@@ -134,15 +139,21 @@ const addNewCondition = () => {
   }
 };
 const handleConditionChange = (actionIndex: number, conditionIndex: number, prop: string) => (event: any) => {
-  if (actionIndex >= 0 && actionIndex < actions.length) {
-    const updatedActions = [...actions];
-    const conditions = updatedActions[actionIndex].conditions;
-    if (conditionIndex >= 0 && conditionIndex < (conditions?.length ?? 0)) {
-      if (conditions) {
-        conditions[conditionIndex] = { ...conditions[conditionIndex], [prop]: event.target.value };
+  const updatedActions = [...actions];
+  const conditions = updatedActions[actionIndex].conditions;
+  if (conditionIndex >= 0 && conditionIndex < (conditions?.length ?? 0)) {
+    let value = event.target.value;
+    // Check if prop is 'value' and convert string to number
+    if (prop === 'value') {
+      value = parseInt(event.target.value, 10); // Use parseInt for integers
+      if (isNaN(value)) {
+        value = 0; // Default or error handling
       }
-      setActions(updatedActions);
     }
+    if (conditions) {
+      conditions[conditionIndex] = { ...conditions[conditionIndex], [prop]: value };
+    }
+    setActions(updatedActions);
   }
 };
   const handleSaveConditions = () => {
@@ -214,6 +225,9 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
     const newActions = [...actions];
     let value = event.target.value;
     if (prop === 'slotIndex') {
+      value = parseInt(event.target.value);
+    }
+    if (prop === 'cooldown') {
       value = parseInt(event.target.value);
     }
     newActions[index] = { ...newActions[index], [prop]: value };
