@@ -15,7 +15,7 @@ export type CustomAction ={
 
 export interface CustomCondition {
     name: ConditionsEnum;
-    operator: '>' | '<' | '!' | '==' | '';
+    operator: ' ' | '>' | '<' | '!' | '==' ;
     value: number;
     valueString?: string;
 }

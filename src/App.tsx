@@ -47,7 +47,7 @@ function App() {
   // const [conditions, setConditions] = useState<CustomCondition[]>([]);
   const actionsEnumOptions = Object.keys(ActionsEnum).filter(key => isNaN(Number(key)));
   const conditionsEnumOptions = Object.keys(ConditionsEnum).filter(key => isNaN(Number(key)));
-  const operators = ['>', '<', '!', '==', ''];
+  const operators = [' ', '>', '<', '!', '=='];
   const [draggedIndex, setDraggedIndex] = useState<number>(0);
   useEffect(() => {
     localStorage.setItem('actions', JSON.stringify(actions));
@@ -129,18 +129,18 @@ const addNewCondition = () => {
   if (selectedActionIndex !== null) {
     const newCondition: CustomCondition = {
       name: ConditionsEnum.HealthP,
-      operator: '<',
+      operator: ' ',
       value: 60,
       valueString: '',
     };
     const updatedActions = [...actions];
-    updatedActions[selectedActionIndex].conditions?.push(newCondition);
+    updatedActions[selectedActionIndex]?.conditions?.push(newCondition);
     setActions(updatedActions);
   }
 };
 const handleConditionChange = (actionIndex: number, conditionIndex: number, prop: string) => (event: any) => {
   const updatedActions = [...actions];
-  const conditions = updatedActions[actionIndex].conditions;
+  const conditions = updatedActions[actionIndex]?.conditions;
   if (conditionIndex >= 0 && conditionIndex < (conditions?.length ?? 0)) {
     let value = event.target.value;
     // Check if prop is 'value' and convert string to number
@@ -169,7 +169,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
   const handleConditionTypeChange = (actionIndex: number, conditionIndex: number) => (event: any) => {
     if (actionIndex != null && actionIndex >= 0 && actionIndex < actions.length) {
       const updatedActions = [...actions];
-      const conditions = updatedActions[actionIndex].conditions;
+      const conditions = updatedActions[actionIndex]?.conditions;
       if (conditionIndex >= 0 && conditionIndex < (conditions?.length ?? 0)) {
         // Directly update the name (type) of the condition
         if (conditions){
@@ -183,7 +183,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
   const handleConditionOperatorChange = (actionIndex: number, conditionIndex: number) => (event: any) => {
     if (actionIndex != null && actionIndex >= 0 && actionIndex < actions.length) {
       const updatedActions = [...actions];
-      const conditions = updatedActions[actionIndex].conditions;
+      const conditions = updatedActions[actionIndex]?.conditions;
       if (conditionIndex >= 0 && conditionIndex < (conditions?.length ?? 0)) {
         // Directly update the operator of the condition
         if (conditions){
@@ -200,7 +200,6 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
     // Function to handle type change
     const handleTypeChange = (index: number) => (event: any) => {
       const newActions = [...actions];
-      console.log(event.target.value)
       newActions[index] = { ...newActions[index], type: event.target.value };
       setActions(newActions);
     };
@@ -211,7 +210,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
       
       const updatedActions = newActions.map(action => ({
         ...action,
-        conditions: action.conditions ? [...action.conditions] : [],
+        conditions: action?.conditions ? [...action?.conditions] : [],
       }));
      if(updatedActions.length < 1){
       setActions([...updatedActions, {...emptyAction, conditions: [] }]);
@@ -356,7 +355,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
         <DialogContent>
           {/* Adjustments to the conditions table to use action-specific conditions */}
           {selectedActionIndex !== null &&
-            actions[selectedActionIndex].conditions?.map((condition, index) => (
+            actions[selectedActionIndex]?.conditions?.map((condition, index) => (
               <TableContainer component={Paper}>
               <Table sx={{ minWidth: 650 }} aria-label="conditions table">
                 <TableHead>
@@ -394,13 +393,15 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
           id={`condition-operator-select-${index}`}
           value={condition.operator}
           label="Operator"
+          defaultValue={operators[0]}
           onChange={handleConditionOperatorChange(selectedActionIndex, index)} // Adjusted to pass both action and condition indexes
         >
           {operators.map(operator => (
-            <MenuItem key={operator} value={operator}>
+            <MenuItem sx={{height:40}} key={operator} value={operator}>
               {operator}
             </MenuItem>
           ))}
+            
         </Select>
       </TableCell>
       <TableCell>
