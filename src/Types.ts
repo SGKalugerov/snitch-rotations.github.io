@@ -1,7 +1,6 @@
 export type CustomAction ={
     keybind: string;
     tapTwice?: boolean;
-    range?: number;
     name: string;
     waitTime?: number;
     stepBack?: boolean;
@@ -50,7 +49,6 @@ export enum ConditionsEnum {
     EnemyCasting,
     NumberOfMobsAttacking,
     Cooldown,
-    Range,
     HasTarget,
     EnemyHasBuff,
     EnemyHasDebuff,
@@ -62,7 +60,6 @@ export enum ConditionsEnum {
     HasPet,
     HasHealthstone,
     ComboPoints,
-    IsInMeleeRange,
     HasWeaponEnch,
     PetHealth,
     TimeOutOfCombatSeconds,
