@@ -230,8 +230,13 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
       value = parseInt(event.target.value);
     }
     if (prop === 'tapTwice') {
-      value = event.target.value === 'Yes' ? true : false
-      value = parseInt(event.target.value);
+      value = event.target.checked;
+    }
+    if (prop === 'stepBack') {
+      value = event.target.checked;
+    }
+    if (prop === 'hasCastBar') {
+      value = event.target.checked;
     }
     newActions[index] = { ...newActions[index], [prop]: value };
     setActions(newActions);
@@ -333,15 +338,15 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
   onChange={handleActionChange(index, 'cooldown')}/>
                  </TableCell>
                 <TableCell align="right">
-                <TextField sx={{width:'75px'}} id="outlined-basic" value={action.stepBack ? 'Yes' : 'No'} variant="outlined" 
+                <TextField sx={{width:'75px'}} type={'checkbox'} id="outlined-basic" value={action.stepBack ? 'Yes' : 'No'} variant="outlined" 
   onChange={handleActionChange(index, 'stepBack')}/>
                   </TableCell>
                 <TableCell align="right">
-                <TextField sx={{width:'75px'}} id="outlined-basic" value={action.hasCastBar ? 'Yes' : 'No'} variant="outlined" 
+                <TextField type={'checkbox'} sx={{width:'75px'}} id="outlined-basic" value={action.hasCastBar ? 'Yes' : 'No'} variant="outlined" 
   onChange={handleActionChange(index, 'hasCastBar')}/>
                   </TableCell>
                 <TableCell align="right">
-                <TextField sx={{width:'75px'}} id="outlined-basic" value={action.tapTwice ? 'Yes' : 'No'} variant="outlined" 
+                <TextField sx={{width:'75px'}} type={'checkbox'} id="outlined-basic" value={action.tapTwice ? 'Yes' : 'No'} variant="outlined" 
   onChange={handleActionChange(index, 'tapTwice')}/>
                  </TableCell>
                 <TableCell align="right">
