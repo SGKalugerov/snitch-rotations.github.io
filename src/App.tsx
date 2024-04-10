@@ -229,6 +229,10 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
     if (prop === 'cooldown') {
       value = parseInt(event.target.value);
     }
+    if (prop === 'tapTwice') {
+      value = event.target.value === 'Yes' ? true : false
+      value = parseInt(event.target.value);
+    }
     newActions[index] = { ...newActions[index], [prop]: value };
     setActions(newActions);
   };
