@@ -241,7 +241,15 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
     newActions[index] = { ...newActions[index], [prop]: value };
     setActions(newActions);
   };
- 
+  const deleteCondition = (actionIndex: number, conditionIndex: number) => {
+    const updatedActions = [...actions]; // Create a shallow copy of the actions array
+    const conditions = updatedActions[actionIndex]?.conditions; // Get a reference to the conditions array of the action to be updated
+  
+    if (conditions && conditionIndex >= 0 && conditionIndex < conditions?.length) {
+      conditions.splice(conditionIndex, 1); // Remove the condition at the specified index
+      setActions(updatedActions); // Update the state with the modified actions array
+    }
+  };
   return (
     <div className="App">
      <TableContainer component={Paper}>
@@ -369,6 +377,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
               <Table sx={{ minWidth: 650 }} aria-label="conditions table">
                 <TableHead>
                   <TableRow>
+                    <TableCell></TableCell>
                     <TableCell>Name</TableCell>
                     <TableCell>Operator</TableCell>
                     <TableCell>Value</TableCell>
@@ -379,7 +388,11 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
 
               <TableBody>
               <TableRow key={index}>
+                <TableCell sx={{width:100}}>     <Button variant="outlined" color="error" onClick={() => deleteCondition(selectedActionIndex, index)}>
+                    Delete
+                  </Button></TableCell>
       <TableCell>
+   
         <Select
           sx={{ width: '125px' }}
           labelId={`condition-type-select-label-${index}`}
