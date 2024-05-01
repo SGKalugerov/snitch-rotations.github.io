@@ -252,7 +252,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
   };
   return (
     <div className="App">
-     <TableContainer component={Paper}>
+     <TableContainer component={Paper} sx={{backgroundColor: 'darkgray'}}>
     <Grid container spacing={2}>
   <Grid item xs={3}>
   <Box>Class </Box>        
@@ -367,7 +367,7 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
         </TableBody>
       </Table>
       <Button onClick={addNewAction}>Add</Button>
-      <Dialog open={openModal} onClose={handleCloseModal} fullWidth={true} maxWidth="xl">
+      <Dialog  sx={{backgroundColor: 'darkgray'}} open={openModal} onClose={handleCloseModal} fullWidth={true} maxWidth="xl">
         <DialogTitle>Manage Conditions</DialogTitle>
         <DialogContent>
           {/* Adjustments to the conditions table to use action-specific conditions */}
@@ -504,6 +504,9 @@ const handleConditionChange = (actionIndex: number, conditionIndex: number, prop
     </TableContainer>
     <Button onClick={() => wipeAll()}>Wipe</Button>
     <Button onClick={() => document.getElementById('fileInput')?.click()}>Upload JSON</Button>
+    <Box>
+    light leather;medium leather;thick leather;heavy hide;thick hide;turtle meat;wool cloth;silk cloth;mageweave cloth;iridescent pearl;small lustrous pearl;spider silk;goretusk liver;goretusk snout;great goretusk snout;stringy vulture meat;lean wolf flank;ruiner leather scraps;mystery meat;bear meat;big bear meat;elemental air;elermental fire;green leather bag;blue leather bag;large knapsack;linen cloth;lion meat;small brown bag;small blue bag;small green bag;small red bag;jade;felcloth;turtle scale;small flame sac;runecloth;rugged leather;grave moss;giant egg;tigerseye;shadowgem;lesser moonstone;moss agate;citrine;aquamarina;star ruby;pristine black diamond;small blue pouch;small red pouch;small green pouch;small black pouch;strider meat;white leather bag;large venom sac;thunder lizard tail;healing;recipe;chunk of boar meat;sharp claw;bag;sack;pack;silk;large fang;elemental earth;red wolf meat;wicked claw;scorpid scale;heavy leather;tender wolf meat;vibrant plume;tender wolf meat;large venom sac;rugged leather;rugged hide;essence of fire;living essence;golden pearl;zesty clam meat;black pearl;felcloth;essence of water;spider's silk;shadow silk;stringy wolf meat;bear meat;runecloth;solid stone;elemental earth;turtle scale;blue dragonscale;black dragonscale;black whelp scale
+    </Box>
 <input
   type="file"
   id="fileInput"
