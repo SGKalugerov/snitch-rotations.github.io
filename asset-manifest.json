@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/snitch-rotations.github.io/static/css/main.5bcb0604.css",
-    "main.js": "/snitch-rotations.github.io/static/js/main.c1752a6f.js",
+    "main.js": "/snitch-rotations.github.io/static/js/main.4e4d0f4a.js",
     "static/js/787.2629a502.chunk.js": "/snitch-rotations.github.io/static/js/787.2629a502.chunk.js",
     "index.html": "/snitch-rotations.github.io/index.html",
     "main.5bcb0604.css.map": "/snitch-rotations.github.io/static/css/main.5bcb0604.css.map",
-    "main.c1752a6f.js.map": "/snitch-rotations.github.io/static/js/main.c1752a6f.js.map",
+    "main.4e4d0f4a.js.map": "/snitch-rotations.github.io/static/js/main.4e4d0f4a.js.map",
     "787.2629a502.chunk.js.map": "/snitch-rotations.github.io/static/js/787.2629a502.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.5bcb0604.css",
-    "static/js/main.c1752a6f.js"
+    "static/js/main.4e4d0f4a.js"
   ]
 }
